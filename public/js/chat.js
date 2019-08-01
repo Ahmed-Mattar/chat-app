@@ -1,5 +1,9 @@
 const socket = io()
 
+// server (emit) -> Client (receive) -- acknowledgement --> server
+
+// client (emit) -> server (recieve) -- acknowledgement --> client
+
 socket.on('message', (message) => {
     console.log(message)
 })
@@ -11,7 +15,12 @@ form.addEventListener('submit', (e) => {
 
     const message = e.target.elements.message.value
 
-    socket.emit('sendMessage', message )
+    socket.emit('sendMessage', message , (error) => {
+        if(error){
+            return console.log(error)
+        }
+        console.log('message deliverd!')
+    })
 
 })
 
@@ -22,7 +31,9 @@ document.querySelector('#send-location').addEventListener('click', () => {
 
    navigator.geolocation.getCurrentPosition((position) => {
         const {coords: {latitude}, coords:{longitude}} = position
-        socket.emit('sendLocation', {latitude,longitude})
+        socket.emit('sendLocation', {latitude,longitude}, () => {
+            console.log('Location shared!')
+        })
    })
 
 })
